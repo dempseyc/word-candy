@@ -1,41 +1,36 @@
 import { useState, useEffect, useRef } from 'react'
 
-const useIsSettled = function (value, delay = 1500) {
-	const [isSettled, setIsSettled] = useState(true);
-	const isFirstRun = useRef(true);
-	const prevValueRef = useRef(value);
-  
-	useEffect(() => {
-	  if (isFirstRun.current) {
-		isFirstRun.current = false;
-		return;
-	  }
-	  setIsSettled(false);
-	  prevValueRef.current = value;
-	  const timerId = setTimeout(() => {
-		setIsSettled(true);
-	  }, delay);
-	  return () => { clearTimeout(timerId); }
-	}, [delay, value]);
-	if (isFirstRun.current) {
-	  return true;
-	}
-	return isSettled && prevValueRef.current === value;
+//compare arrays of strings
+const sameData = function (arr1,arr2) {
+    if (arr1.length != arr2.length) { return false; }
+    if (!arr1 || !arr2) { return false; }
+    if (JSON.stringify(arr1) != JSON.stringify(arr2))  { return false; }
+    return true;
 }
 
 const ObservedTextArea = (props) => {
-    const {lastWord} = props;
-    const [val, setVal] = useState(lastWord);
-	const isValueSettled = useIsSettled(val,1500);
+    const {makeQuery} = props;
+    const [val, setVal] = useState("");
+    const [currWordArray, setCurrWordArray] = useState([]);
 
-    useEffect(() => {
-		if (isValueSettled && (lastWord !== val)) {
-			console.log('do api thing');
-		}
-	},[val, isValueSettled])
-
+    const isSame = (arr1,arr2) => sameData(arr1,arr2);
+    
     const handleChange = (e) => {
-		setVal(e.target.value);
+        let newVal = e.target.value
+        // control input val
+		setVal(newVal);
+        // if you use isSettled, have to await it then execute or better, make eventhandler
+        // when val changes, if lastChar is " ", redo wordArray, filter out 0-200, if filtered wordArray
+        if (newVal.charAt(newVal.length-1) == " ") {
+            let newArray = newVal.split(" ");
+            ////////////////// newArray = newArray.filter( (word) => !inBlacklist(word) )
+            // has changed, make new queries to api
+            if ( !isSame(newArray,currWordArray) ) {
+                makeQuery(newArray[newArray.length-2]); // -2 omits last item, the space
+                setCurrWordArray(newArray);
+            }
+        }
+
 	}
 
     return (
