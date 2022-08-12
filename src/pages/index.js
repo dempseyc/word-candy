@@ -1,14 +1,14 @@
 import {useState} from 'react'
 import ObservedTextArea from '../components/ObservedTextArea.js'
-import ResultsShower from '../components/ResultsShower'
+import ResultsFetcher from '../components/ResultsFetcher'
 
-const queryParams = ['ml','rel_bga']
+const queryParams = ['ml','rel_rhy']
 
 export default function Home() {
-  const [display, setDisplay] = useState(<ResultsShower query="" queryParams={queryParams}/>);
+  const [display, setDisplay] = useState(<ResultsFetcher query="" queryParams={queryParams}/>);
 
   const makeQuery = function (query) {
-    setDisplay(<ResultsShower query={query} queryParams={queryParams}/>);
+    setDisplay(<ResultsFetcher query={query} queryParams={queryParams}/>);
   }
 
   return (
