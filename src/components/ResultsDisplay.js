@@ -27,8 +27,18 @@ const networkOfWords = (obj, network={nodes:[],links:[]}, indexFrom=0, keywordIn
 
 const ResultsDisplay = (props) => {
     const {keyWord, data} = props;
-    return (<div><p>{JSON.stringify(networkOfWords(data))}</p>
-    <p>{JSON.stringify(data)}</p></div>)
+    const words = networkOfWords(data);
+    return (
+    <div>
+        <p>{words.nodes.map(node => {
+                return ( node.isKeyword ? 
+                <span style={{fontWeight: 'bold'}} key={node.word}>{node.word} </span> :
+                <span key={node.word}>{node.word} </span>
+                )
+            })
+        }</p>
+    </div>
+    )
 }
 
 export default ResultsDisplay;
